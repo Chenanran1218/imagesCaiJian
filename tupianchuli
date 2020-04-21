@@ -1,0 +1,33 @@
+import cv2
+
+def sliding_window(image, stepSize, windowSize):
+    # slide a window across the image
+    for y in range(0, image.shape[0], stepSize[1]):
+        for x in range(0, image.shape[1], stepSize[0]):
+            yield (x, y, image[y:y + windowSize[1], x:x + windowSize[0]])
+
+def get_slice(image, stepSize, windowSize):
+    slice_sets = []
+    for (x, y, window) in sliding_window(image, stepSize, windowSize):
+        if window.shape[0] != windowSize[1] or window.shape[1] != windowSize[0]:
+            continue
+        slice = image[y:y + windowSize[1], x:x + windowSize[0]]
+        slice_sets.append(slice)
+    return slice_sets
+
+if __name__ == '__main__':
+    image = cv2.imread('/Users/macbookair/Desktop/tel/tel/iamesCaiJian/data/yuantu/test.png')#图片路径
+    i = 0
+    j = 0
+    (winW, winH)=(416, 416)
+    w = image.shape[1] # 940
+    h = image.shape[0] # 559
+    stepSize = (262, 143)
+    images = get_slice(image, stepSize=stepSize, windowSize=(winW, winH))
+    print(len(images))
+    for pic in images:
+        cv2.imwrite(str(i)+'_'+str(j)+'.png',pic)
+        j = j+1
+        if j==3:
+            i=1
+            j=0
